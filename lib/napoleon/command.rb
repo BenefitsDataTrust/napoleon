@@ -13,7 +13,6 @@ module Napoleon
 
     def enact **args
       result = perform **args
-      puts "COMMAND.enact result: #{result.inspect}"
       broadcast result
       Napoleon::CommandResult.new result, broadcast_server_response
       result
@@ -28,22 +27,10 @@ module Napoleon
       args.first
     end
 
-    # default update, basic update on object, most likely temp
-    def update **args
-      object = args[:object]
-      attrs = args[:attrs]
-      obj = object.class.find(object.id)
-      obj.class.update_attributes attrs
-    end
-
     def broadcast object
-      puts "broadcast, #{object.inspect}"
       if object
         puts "#{Napoleon.broadcasters.inspect}"
         Napoleon.broadcasters.each { |broadcast|
-          puts "IN BROADCAST: #{broadcast.inspect}"
-          puts "EVENTNAME: #{self.event_name}"
-          puts "OBJ: #{object.inspect}"
           broadcast.perform self.event_name, object
         }
       end
