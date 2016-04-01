@@ -5,7 +5,7 @@ module Napoleon
       new user
     end
 
-    attr_reader :user, :broadcast_server_response, :websocket_channel
+    attr_reader :user, :broadcast_server_response
 
     def initialize user=SystemUser.new
       @user = user
@@ -31,7 +31,7 @@ module Napoleon
       if object
         puts "#{Napoleon.broadcasters.inspect}"
         Napoleon.broadcasters.each { |broadcast|
-          broadcast.perform self.event_name, object, websocket_channel
+          broadcast.perform self.event_name, object
         }
       end
     end
