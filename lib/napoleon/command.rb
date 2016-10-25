@@ -28,7 +28,7 @@ module Napoleon
     end
 
     def broadcast object
-      if object && ENV["BROADCAST_EVENTS"]
+      if object
         Napoleon.broadcasters.each { |broadcast|
           broadcast.perform self.event_name, object
         }
