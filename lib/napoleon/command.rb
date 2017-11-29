@@ -22,21 +22,26 @@ module Napoleon
       perform **args
     end
 
+    def broadcast?
+      !event_name.empty?
+    end
+
+    def event_name
+      nil
+    end
+
     private
+
     def perform
       args.first
     end
 
     def broadcast object
-      if object
+      if object && broadcast?
         Napoleon.broadcasters.each { |broadcast|
-          broadcast.perform self.event_name, object
+          broadcast.perform event_name, object
         }
       end
-    end
-
-    def event_name
-      "default.command"
     end
 
   end
