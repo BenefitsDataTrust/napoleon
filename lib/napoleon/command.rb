@@ -27,7 +27,7 @@ module Napoleon
     end
 
     def event_name
-      nil
+      ""
     end
 
     private
