@@ -22,13 +22,10 @@ module Napoleon
       perform **args
     end
 
-    def broadcast?
-      !event_name.empty?
-    end
-
     def event_name
       ""
     end
+
 
     private
 
@@ -37,11 +34,21 @@ module Napoleon
     end
 
     def broadcast object
-      if object && broadcast?
-        Napoleon.broadcasters.each { |broadcast|
-          broadcast.perform event_name, object
+      if object && event_name?
+        Napoleon.broadcasters.each { |broadcaster|
+          broadcaster.perform(event_name, object) if broadcast?(broadcaster)
         }
       end
+    end
+
+    def event_name?
+      !event_name.empty?
+    end
+
+    def broadcast? broadcaster
+      return true if !broadcaster.respond_to?(:broadcast_all_events)
+      return true if broadcaster.broadcast_all_events
+      return true if respond_to?(:broadcast!) && broadcast!
     end
 
   end
