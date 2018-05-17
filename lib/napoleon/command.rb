@@ -1,20 +1,23 @@
 module Napoleon
   class Command
 
-    def self.by user
-      new user
-    end
+    attr_reader :issuer#, :broadcast_server_response
 
-    attr_reader :user, :broadcast_server_response
-
-    def initialize user=SystemUser.new
-      @user = user
+    def initialize issuer=SystemUser.new
+      @issuer = issuer
     end
 
     def enact **args
       result = perform **args
       broadcast result
-      Napoleon::CommandResult.new result, broadcast_server_response
+      # Napoleon::CommandResult.new result, broadcast_server_response
+      result
+    end
+
+    def enact_results **args
+      result = perform_results **args
+      broadcast result
+      # Napoleon::CommandResult.new result, broadcast_server_response
       result
     end
 
@@ -30,7 +33,11 @@ module Napoleon
     private
 
     def perform
-      args.first
+      raise "A command must have a perform method."
+    end
+
+    def perform_results **args
+      perform **args
     end
 
     def broadcast object
@@ -42,7 +49,7 @@ module Napoleon
     end
 
     def event_name?
-      !event_name.empty?
+      event_name.present?
     end
 
     def broadcast? broadcaster

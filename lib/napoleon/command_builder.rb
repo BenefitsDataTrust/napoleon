@@ -1,14 +1,26 @@
 module Napoleon
 	class CommandBuilder
-		attr_reader :user
 
-		def initialize user
-			@user = user
+		attr_reader :issuer, :method_key
+
+		def initialize issuer, method_key
+			@issuer = issuer
+			@method_key = method_key
 		end
 
-		def method_missing method_key, **args, &block
-			klass = "Commands::#{method_key.to_s.camelize}"
-			klass.constantize.new(user).enact(**args)
+		def enact **args, &block
+			command.enact **args
+		end
+
+		def enact_results **args
+			command.enact_results **args
+		end
+
+
+		private
+
+		def command
+			"Commands::#{method_key.to_s.camelize}".constantize.new(issuer)
 		end
 
 	end
