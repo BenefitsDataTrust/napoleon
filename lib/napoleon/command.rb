@@ -1,21 +1,26 @@
 module Napoleon
   class Command
 
-    attr_reader :issuer#, :broadcast_server_response
+    attr_reader :user, :channel, :return_function, :args#, :broadcast_server_response
 
-    def initialize issuer=SystemUser.new
-      @issuer = issuer
+    def self.by user
+      new user
     end
 
-    def enact **args
-      result = perform **args
-      broadcast result
-      # Napoleon::CommandResult.new result, broadcast_server_response
-      result
+    def initialize user=SystemUser.new, args
+      @user = user
+      @channel = args.delete(:channel)
+      @return_function = args.delete(:return_function)
+      @args = args
     end
 
-    def enact_results **args
-      result = perform_results **args
+    def enact
+      result = if return_function
+        send(return_function.to_sym, args)
+      else
+        perform args
+      end
+
       broadcast result
       # Napoleon::CommandResult.new result, broadcast_server_response
       result
@@ -36,14 +41,10 @@ module Napoleon
       raise "A command must have a perform method."
     end
 
-    def perform_results **args
-      perform **args
-    end
-
     def broadcast object
       if object && event_name?
         Napoleon.broadcasters.each { |broadcaster|
-          broadcaster.perform(event_name, object) if broadcast?(broadcaster)
+          broadcaster.perform(event_name, object, channel) if broadcast?(broadcaster)
         }
       end
     end
