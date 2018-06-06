@@ -1,13 +1,13 @@
 module Napoleon
   class CommandBroadcaster
 
-    attr_reader :object, :channels, :event_name, :broadcast
+    attr_reader :object, :channels, :event_name, :broadcast_override
 
-    def initialize object:, channels:["portfolio-events"], event_name:"", broadcast:false
+    def initialize object:, channels:["portfolio-events"], event_name:"", broadcast_override:false
       @object = object
       @channels = channels
       @event_name = event_name
-      @broadcast = broadcast
+      @broadcast_override = broadcast_override
     end
 
     def broadcast
@@ -19,7 +19,7 @@ module Napoleon
     def broadcast? broadcaster
       return true if !broadcaster.respond_to?(:broadcast_all_events)
       return true if broadcaster.broadcast_all_events
-      broadcast
+      broadcast_override
     end
 
   end

@@ -1,30 +1,33 @@
+require 'napoleon/command_broadcaster'
+
 module Napoleon
   class Command
 
-    attr_reader :user, :channel, :extra_broadcasts, :return_function, :args#, :broadcast_server_response
+    attr_reader :user, :extra_broadcasts, :return_function, :args#, :broadcast_server_response
 
     def self.by user
       new user
     end
 
-    def initialize user=SystemUser.new, args
+    def initialize user:SystemUser.new, **args
       @user = user
-      @channel = args.delete(:channel)
-      # allows you to generate additional broadcasts to various pubsub topics
+      # allows you to generate additional broadcasts, using custom command methods, to custom topics
       @extra_broadcasts = *args.delete(:extra_broadcasts)
-      # changes the return object
+      # changes the returned object using a custom command method
       @return_function = args.delete(:return_function)
       @args = args
     end
 
     def enact
       result = if return_function
+        p "return function: #{return_function}"
         send(return_function.to_sym, args)
       else
+        p "no return function"
         perform args
       end
 
-      CommandBroadcaster.new(object:result, event_name:event_name, broadcast:broadcast_override?).broadcast
+      CommandBroadcaster.new(object:result, event_name:event_name, broadcast_override:command_broadcast_override).broadcast
 
       handle_extra_broadcasts(result) if extra_broadcasts.present?
 
@@ -45,7 +48,7 @@ module Napoleon
 
     def handle_extra_broadcasts result
       extra_broadcasts.each do |callback|
-        send(callback.to_sym, result:result, args)
+        send(callback.to_sym, result, args)
       end
     end
 
@@ -53,7 +56,7 @@ module Napoleon
       raise "A command must have a perform method."
     end
 
-    def broadcast_override?
+    def command_broadcast_override
       respond_to?(:broadcast!) && broadcast!
     end
 

@@ -1,6 +1,6 @@
 require "napoleon/version"
-require "napoleon/command_builder"
-require "napoleon/command_result"
+#require "napoleon/command_builder"
+#require "napoleon/command_result"
 require "napoleon/command"
 require "napoleon/commander"
 require "napoleon/command_broadcaster"

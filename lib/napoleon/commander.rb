@@ -6,7 +6,9 @@ module Napoleon
     end
 
     def perform method_key, **args
-    	CommandBuilder.new(user:self, method_key:method_key.to_s, args:args).enact
+    	"Commands::#{method_key.to_s.camelize}".constantize.new(user:self, **args).enact
+    # rescue NameError
+    #   p "Method #{method_key} does not exist on #{self.class}"
     end
 
   end
