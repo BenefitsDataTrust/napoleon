@@ -1,22 +1,16 @@
 module Napoleon
   class CommandBroadcaster
 
-    attr_reader :object, :channels, :event_name, :broadcast_override
-
-    def initialize object:, channels:["portfolio-events"], event_name:"", broadcast_override:false
-      @object = object
-      @channels = channels
-      @event_name = event_name
-      @broadcast_override = broadcast_override
-    end
-
-    def broadcast
+    def self.broadcast object:, channels:["portfolio-events"], event_name:"", broadcast_override:false
       Napoleon.broadcasters.each { |broadcaster|
-        broadcaster.perform(event_name, object, channels) if broadcast?(broadcaster)
+        broadcaster.perform(event_name, object, channels) if broadcast?(broadcaster, broadcast_override)
       }
     end
 
-    def broadcast? broadcaster
+
+    private
+
+    def self.broadcast? broadcaster, broadcast_override
       return true if !broadcaster.respond_to?(:broadcast_all_events)
       return true if broadcaster.broadcast_all_events
       broadcast_override

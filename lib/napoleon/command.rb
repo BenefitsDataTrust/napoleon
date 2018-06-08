@@ -20,14 +20,16 @@ module Napoleon
 
     def enact
       result = if return_function
-        p "return function: #{return_function}"
         send(return_function.to_sym, args)
       else
-        p "no return function"
         perform args
       end
 
-      CommandBroadcaster.new(object:result, event_name:event_name, broadcast_override:command_broadcast_override).broadcast
+      CommandBroadcaster.broadcast(
+        object:result, 
+        event_name:event_name, 
+        broadcast_override:command_broadcast_override
+      )
 
       handle_extra_broadcasts(result) if extra_broadcasts.present?
 
