@@ -11,16 +11,17 @@ module Napoleon
     end
 
     def enact
-      before_command
+      before_command args:args
 
       result = perform args
-
       CommandBroadcaster.broadcast(
         object:result, 
         event_name:event_name, 
       )
 
-      after_command(result:result)
+      after_command result:result, args:args
+
+      result
     end
 
     def callback **args
@@ -31,11 +32,10 @@ module Napoleon
       ""
     end
 
-    def before_command
+    def before_command args:nil
     end
 
-    def after_command result:
-      result
+    def after_command result:nil, args:{}
     end
 
 
