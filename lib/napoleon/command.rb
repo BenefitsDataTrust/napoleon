@@ -1,7 +1,7 @@
 module Napoleon
   class Command
 
-    def initialize user:SystemUser.new, **args
+    def initialize user:Napoleon::SystemUser.new, **args
       @user = user
       @args = args
     end

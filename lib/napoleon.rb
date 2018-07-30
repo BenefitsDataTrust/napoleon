@@ -1,3 +1,4 @@
+require 'active_support/all'
 require "napoleon/version"
 require "napoleon/command"
 require "napoleon/commander"
