@@ -1,7 +1,7 @@
 require "napoleon/version"
 require "napoleon/command"
 require "napoleon/commander"
-require "napoleon/command_broadcaster"
+require "napoleon/system_user"
 
 module Napoleon
 
