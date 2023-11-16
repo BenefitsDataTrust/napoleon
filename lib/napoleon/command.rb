@@ -8,7 +8,7 @@ module Napoleon
 
     def enact
       before_command args:args
-      result = perform args
+      result = perform **args
       broadcast object:result, event_name:event_name
       after_command result:result, args:args
 
